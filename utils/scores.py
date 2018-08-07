@@ -12,7 +12,7 @@ def mapScore(y_predict, y_label):
     denominator = np.tile(np.array([1.0, 2.0]), (batch_size, 1))
 
     y_divide_deno = np.ones(shape=(batch_size, dim)) / denominator * equal_map
-    score = np.mean(np.sum(y_divide_deno, axis=1))
+    score = np.mean(np.mean(y_divide_deno, axis=1))
     return score
 
 

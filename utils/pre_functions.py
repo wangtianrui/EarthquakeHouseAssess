@@ -41,3 +41,5 @@ def fillNanWithMean(df):
         mean_val = df[column].mean()
         df[column].fillna(mean_val, inplace=True)
     return df
+
+
