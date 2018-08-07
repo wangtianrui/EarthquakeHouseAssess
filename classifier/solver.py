@@ -21,7 +21,7 @@ class Solver(object):
             self.ss = StandardScaler()
             self.flag = "logistic"
         dim = X_train.shape[1]
-        X_all = X_train[:, :dim - 2]
+        X_all = X_train[:, :dim - 1]
         y_all = X_train[:, dim - 1]
         X_all = self.ss.fit_transform(X_all)
         for step in range(maxStep):
@@ -45,7 +45,7 @@ class Solver(object):
             self.ss = StandardScaler()
             self.flag = "randomForest"
         num, dim = X_train.shape
-        X_all = X_train[:, :dim - 2]
+        X_all = X_train[:, :dim - 1]
         y_all = X_train[:, dim - 1]
         X_all = self.ss.fit_transform(X_all)
         self.model.fit(X_all, y_all)
@@ -62,7 +62,7 @@ class Solver(object):
 
         self.flag = "lgb"
         num, dim = X_train.shape
-        X_all = X_train[:, :dim - 2]
+        X_all = X_train[:, :dim - 1]
         y_all = X_train[:, dim - 1]
         X_all = self.ss.fit_transform(X_all)
 
@@ -95,7 +95,7 @@ class Solver(object):
     def xgboost(self, X_train, params, num_boost_round, log=False):
         self.flag = "xgb"
         num, dim = X_train.shape
-        X_all = X_train[:, :dim - 2]
+        X_all = X_train[:, :dim - 1]
         y_all = X_train[:, dim - 1]
         X_all = self.ss.fit_transform(X_all)
 

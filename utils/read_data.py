@@ -35,3 +35,9 @@ class DataLoader(object):
             return np.array(self.predict_data)
         else:
             return np.array(self.train_data), np.array(self.predict_data)
+
+    def save_to_commit(self, y_pred):
+        father_tree_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        save_data_file = os.path.join(father_tree_path, "data/save.csv")
+        pd_data = pd.DataFrame(y_pred, columns=["y1", "y2"])
+        pd_data.to_csv(save_data_file)

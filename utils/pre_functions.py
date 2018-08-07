@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.decomposition import PCA
 
 
 def dealWithNan(X_train, X_predit):
@@ -43,3 +44,25 @@ def fillNanWithMean(df):
     return df
 
 
+def pca_function(X_train, X_test, n_components):
+    train_num, train_dim = X_train.shape
+    # test_num, test_dim = X_test.shape
+    # pca = PCA(n_components)
+    X_train_all = X_train[:, :train_dim - 1]
+    y_train_all = X_train[:, train_dim - 1]
+    #
+    # X_train_pca = pca.fit_transform(X_train_all)
+    # X_train = np.append(X_train_pca, y_train_all)
+    #
+    # X_test_all = X_test[:, :test_dim - 2]
+    # y_test_all = X_test[:, test_dim - 1]
+    # X_test_pca = pca.fit_transform(X_test_all)
+    # X_test = np.append(X_test_pca, y_test_all)
+    data_all = np.append(X_train_all, X_test, axis=0)
+    pca = PCA(n_components)
+    X_pca = pca.fit_transform(data_all)
+    X_train = np.append(X_pca[:train_num], y_train_all, axis=1)
+    X_test = X_pca[train_num:]
+    print(data_all.shape)
+
+    return X_train, X_test
