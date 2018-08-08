@@ -6,6 +6,7 @@ import lightgbm as lgb
 import numpy as np
 import random
 import xgboost as xgb
+from sklearn.model_selection import GridSearchCV
 
 
 class Solver(object):
@@ -58,7 +59,7 @@ class Solver(object):
             # print(step, "-- mapScore: %f  ,  accuracy: %f", (0, 0))
             print("-- accuracy: %f", (score.accuracy_score(y, y_pred)))
 
-    def lgb(self, X_train, params, num_boost_round, log=False):
+    def lgb_origin(self, X_train, params, num_boost_round, log=False):
 
         self.flag = "lgb"
         num, dim = X_train.shape
@@ -78,6 +79,56 @@ class Solver(object):
                                valid_sets=lgb_eval,
                                early_stopping_rounds=500,
                                verbose_eval=False)
+        if log:
+            random_index = np.random.choice(X_train.shape[0], 500)
+            X = X_all[random_index]
+            y = y_all[random_index]
+            softmax = self.model.predict(X, num_iteration=self.model.best_iteration)
+            first = np.argmax(softmax, axis=1)
+            print("accuracy:%f", (score.accuracy_score(first, y)))
+            softmax[range(X.shape[0]), first] = 0
+            second = np.argmax(softmax, axis=1).reshape(-1, 1)
+            first = first.reshape(-1, 1)
+            y_pred = np.append(first, second, axis=1)
+            print("map score: %f", (score.mapScore(y_pred, y)))
+            print("最佳迭代次数：", self.model.best_iteration)
+
+    def lgb(self, X_train, params, num_boost_round, test_params=None, log=False):
+
+        self.flag = "lgb"
+        num, dim = X_train.shape
+        X_all = X_train[:, :dim - 1]
+        y_all = X_train[:, dim - 1]
+        X_all = self.ss.fit_transform(X_all)
+
+        # random_index = np.random.choice(X_train.shape[0], 500)
+        # X = X_all[random_index]
+        # y = y_all[random_index]
+
+        # lgb_train = lgb.Dataset(X_all, y_all)
+        # lgb_eval = lgb.Dataset(X, y)
+        # self.model = lgb.train(params,
+        #                        lgb_train,
+        #                        num_boost_round=num_boost_round,
+        #                        valid_sets=lgb_eval,
+        #                        early_stopping_rounds=500,
+        #                        verbose_eval=False)
+        param_grid = {
+            # "reg_alpha": [0.3, 0.7, 0.9, 1.1],
+            "learning_rate": [0.1, 0.25, 0.3],
+            'n_estimators': [75, 80, 85, 90],
+            'max_depth': [6, 7, 8, 9],
+            'num_leaves': [100, 150, 200, 250]
+        }
+        self.model = lgb.LGBMClassifier(
+            boosting_type='gbdt',
+            objective='multiclass',
+            num_boost_round=num_boost_round,
+        )
+        self.model.n_classes = 4
+        searcher = GridSearchCV(estimator=self.model, param_grid=param_grid, cv=5)
+        searcher.fit(X_all, y_all)
+        print("best:", searcher.best_params_)
         if log:
             random_index = np.random.choice(X_train.shape[0], 500)
             X = X_all[random_index]

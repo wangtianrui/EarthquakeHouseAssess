@@ -61,8 +61,9 @@ def pca_function(X_train, X_test, n_components):
     data_all = np.append(X_train_all, X_test, axis=0)
     pca = PCA(n_components)
     X_pca = pca.fit_transform(data_all)
-    X_train = np.append(X_pca[:train_num], y_train_all, axis=1)
+    print(X_pca[:train_num].shape,y_train_all.shape)
+    X_train = np.append(X_pca[:train_num], y_train_all.reshape(-1,1), axis=1)
     X_test = X_pca[train_num:]
-    print(data_all.shape)
+    # print(data_all.shape)
 
     return X_train, X_test
