@@ -23,4 +23,4 @@ if __name__ == "__main__":
     lgb_origin = LGB(params=params)
     lgb_origin.train(X_train=X_train, y_train=y_train, X_test=X_train, y_test=y_train, log=True)
     y_predict = lgb_origin.predict(predict_data)
-    dataLoader.save_to_commit(y_predict)
+    # dataLoader.save_to_commit(y_predict)
