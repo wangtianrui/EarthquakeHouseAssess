@@ -41,3 +41,15 @@ class DataLoader(object):
         save_data_file = os.path.join(father_tree_path, "data/save.csv")
         pd_data = pd.DataFrame(y_pred, columns=["y1", "y2"])
         pd_data.to_csv(save_data_file)
+
+    def compare(self, name1, name2):
+        father_tree_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        save_data_file = os.path.join(father_tree_path, "data")
+        name1_path = os.path.join(save_data_file, name1)
+        name2_path = os.path.join(save_data_file, name2)
+
+        data1 = np.array(pd.read_csv(name1_path))
+        print(data1)
+        data2 = np.array(pd.read_csv(name2_path))
+        print(data2)
+        print(np.mean((data1 == data2).astype(int)))
